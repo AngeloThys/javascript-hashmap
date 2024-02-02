@@ -1,6 +1,8 @@
 class HashMap {
+
   constructor(capacity = 16, loadFactor = 0.75) {
     this.capacity = capacity;
+    this.increment = capacity;
     this.loadFactor = loadFactor;
     this.load = 0;
     this.buckets = Array(capacity).fill(undefined);
@@ -10,12 +12,13 @@ class HashMap {
     let OldBuckets = this.buckets;
     let key = null;
     let value = null;
-    this.capacity += 16;
+    this.capacity += this.increment;
     this.buckets = Array(this.capacity).fill(undefined);
+    this.load = 0;
     for (let i = 0; i < OldBuckets.length; ++i) {
       if (OldBuckets[i] !== undefined) {
-        key = Object.keys(OldBuckets[0])[0];
-        value = Object.values(OldBuckets[0])[0];
+        key = Object.keys(OldBuckets[i])[0];
+        value = Object.values(OldBuckets[i])[0];
         this.set(key, value);
       }
     }
@@ -32,7 +35,7 @@ class HashMap {
     return hashCode % this.capacity;
   }
 
-  load() {
+  isOverLoad() {
     let maxLoad = this.loadFactor * this.capacity;
 
     return this.load >= maxLoad
@@ -41,7 +44,9 @@ class HashMap {
   set(key, value) {
     let index = this.hash(key);
 
-    if (this.load()) this.grow();
+    if (this.isOverLoad()) {
+      this.grow();
+    }
 
     this.buckets[index] = { [key]: value };
     this.load += 1;
@@ -49,8 +54,13 @@ class HashMap {
 
   get(key) {
     let index = this.hash(key);
+    let obj = this.buckets[index];
 
-    return this.buckets[index] ?? null;
+    if (obj) {
+      return Object.values(obj)[0];
+    }
+
+    return null
   }
 
   has(key) {
@@ -64,6 +74,7 @@ class HashMap {
 
     if (this.buckets[index]) {
       this.buckets[index] = undefined;
+      this.load -= 1;
       return true
     }
 
@@ -76,30 +87,34 @@ class HashMap {
 
   clear() {
     this.buckets = Array(this.capacity).fill(undefined);
+    this.load = 0;
   }
 
   keys() {
-    return this.buckets.map((entry) => {
+    return this.buckets.reduce((keyList, entry) => {
       if (entry !== undefined) {
-        return entry.keys()[0];
+        keyList.push(Object.keys(entry)[0]);
       }
-    });
+      return keyList;
+    }, []);
   }
 
   values() {
-    return this.buckets.map((entry) => {
+    return this.buckets.reduce((valueList, entry) => {
       if (entry !== undefined) {
-        return entry.values()[0];
+        valueList.push(Object.values(entry)[0]);
       }
-    });
+      return valueList;
+    }, []);
   }
 
   entries() {
-    return this.buckets.map((entry) => {
+    return this.buckets.reduce((entryList, entry) => {
       if (entry !== undefined) {
-        return entry.entries();
+        entryList.push(Object.entries(entry)[0]);
       }
-    });
+      return entryList;
+    }, []);
   }
 }
 
