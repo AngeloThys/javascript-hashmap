@@ -32,8 +32,18 @@ class HashMap {
     return hashCode;
   }
 
+  load() {
+    let maxLoad = this.loadFactor * this.capacity;
+
+    return this.load >= maxLoad
+  }
+
   set(key, value) {
     let index = this.hash(key) % this.capacity;
+
+    if (this.load()) this.grow();
+
     this.buckets[index] = { [key]: value };
+    this.load += 1;
   }
 }
