@@ -69,4 +69,37 @@ class HashMap {
 
     return false;
   }
+
+  length() {
+    return this.load;
+  }
+
+  clear() {
+    this.buckets = Array(this.capacity).fill(undefined);
+  }
+
+  keys() {
+    return this.buckets.map((entry) => {
+      if (entry !== undefined) {
+        return entry.keys()[0];
+      }
+    });
+  }
+
+  values() {
+    return this.buckets.map((entry) => {
+      if (entry !== undefined) {
+        return entry.values()[0];
+      }
+    });
+  }
+
+  entries() {
+    return this.buckets.map((entry) => {
+      if (entry !== undefined) {
+        return entry.entries();
+      }
+    });
+  }
 }
+
