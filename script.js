@@ -29,7 +29,7 @@ class HashMap {
       hashCode = primeNumber * hashCode + key.charCodeAt(i);
     }
 
-    return hashCode;
+    return hashCode % this.capacity;
   }
 
   load() {
@@ -39,11 +39,23 @@ class HashMap {
   }
 
   set(key, value) {
-    let index = this.hash(key) % this.capacity;
+    let index = this.hash(key);
 
     if (this.load()) this.grow();
 
     this.buckets[index] = { [key]: value };
     this.load += 1;
+  }
+
+  get(key) {
+    let index = this.hash(key);
+
+    return this.buckets[index] ?? null;
+  }
+
+  has(key) {
+    let index = this.hash(key);
+
+    return !!this.buckets[index]
   }
 }
