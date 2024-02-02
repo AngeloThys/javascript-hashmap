@@ -58,4 +58,15 @@ class HashMap {
 
     return !!this.buckets[index]
   }
+
+  remove(key) {
+    let index = this.hash(key);
+
+    if (this.buckets[index]) {
+      this.buckets[index] = undefined;
+      return true
+    }
+
+    return false;
+  }
 }
